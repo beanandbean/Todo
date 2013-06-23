@@ -2,7 +2,7 @@ magic='--calling-python-from-bash--'
 """exec" python -E "$0" "$@" """#$magic"
 
 if __name__ == "__main__":
-    import getpass, os, pickle, sys, time
+    import copy, getpass, os, pickle, sys, time
 
     def _todoListPath():
         return os.path.join(os.getcwd(), ".todo", "list.data")
@@ -33,7 +33,7 @@ if __name__ == "__main__":
             todoList = _todoList()
             localTime=time.localtime()
             localTimeString="%04d-%02d-%02d %02d:%02d:%02d" % (localTime.tm_year, localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, localTime.tm_min, localTime.tm_sec)
-            todoList.append({"author": getpass.getuser(), "time": localTimeString, "condition": "open", "text": args[0]})
+            todoList.append({"author": getpass.getuser(), "time": localTimeString, "condition": "open", "text": args[0], "exported": False})
             _saveTodoList(todoList)
             print "Line added:"
             print _line(todoList, len(todoList) - 1)
@@ -95,6 +95,7 @@ if __name__ == "__main__":
                     print _line(todoList, entryId)
     		else:
                     todoList[entryId]["condition"] = "remv"
+                    todoList[entryId]["exported"] = False
                     _saveTodoList(todoList)
                     print "Line removed:"
                     print _line(todoList, entryId)
@@ -116,6 +117,7 @@ if __name__ == "__main__":
                     print _line(todoList, entryId)
 		else:
                     todoList[entryId]["condition"] = "open"
+                    todoList[entryId]["exported"] = False
                     _saveTodoList(todoList)
                     print "Line reopened:"
                     print _line(todoList, entryId)
@@ -149,8 +151,52 @@ if __name__ == "__main__":
             else:
                 print "Nothing to display on condition \"%s\"!" % condition.upper()
 
+    def export(*args):
+        todoList = _todoList()
+        output = ""
+        count = 0
+        for index in xrange(len(todoList)):
+            if todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
+                todoList[index]["exported"] = True
+                output += _line(todoList, index) + "\n"
+                count += 1
+        _saveTodoList(todoList)
+        if count:
+            print "Work done in this commit (exported by TODO in Python):\n%s" % output[:-1]
+        else:
+            print "No todo item done in this commit."
+
+    def preview(*args):
+        print "Just previewing:"
+        todoList = _todoList()
+        output = ""
+        count = 0
+        for index in xrange(len(todoList)):
+            if todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
+                output += _line(todoList, index) + "\n"
+                count += 1
+        if count:
+            print "Work done in this commit (exported by TODO in Python):\n%s" % output[:-1]
+        else:
+            print "No todo item done in this commit."
+
     if len(sys.argv) < 3:
         print "Command name not found!"
+        print "Commands available:"
+        allObjects = copy.copy(locals())
+        allKeys = allObjects.keys()
+        allKeys.sort()
+        def function():
+            pass
+        count = 0
+        for objectName in allKeys:
+            if objectName[0] != "_" and type(allObjects[objectName]) == type(function):
+                print objectName,
+                count += 1
+                if count % 5 == 0:
+                    print
+        if count % 5 != 0:
+            print
     else:
         try:
             func = eval(sys.argv[1])
