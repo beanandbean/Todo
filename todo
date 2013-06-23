@@ -1,0 +1,161 @@
+magic='--calling-python-from-bash--'
+"""exec" python -E "$0" "$@" """#$magic"
+
+if __name__ == "__main__":
+    import getpass, os, pickle, sys, time
+
+    def _todoListPath():
+        return os.path.join(os.getcwd(), ".todo", "list.data")
+
+    def _todoList():
+	if os.path.isfile(_todoListPath()):
+	    return pickle.load(open(_todoListPath()))
+        else:
+	    return list();
+
+    def _saveTodoList(todoList):
+        pickle.dump(todoList, open(_todoListPath(), "w"))
+        os.chmod(_todoListPath(), 0666)
+
+    def _line(todoList, index):
+	return "%12s %03d: [%s] %s" % (todoList[index]["author"], index, todoList[index]["condition"].upper(), todoList[index]["text"])
+
+    def init(*args):
+	todoDir = os.path.join(os.getcwd(), ".todo")
+	if os.path.isdir(todoDir):
+            os.system("rm -r -f %s" % todoDir)
+	os.mkdir(todoDir)
+	os.chmod(todoDir, 0777)
+	_saveTodoList(list())
+
+    def add(*args):
+        if len(args) > 0:
+            todoList = _todoList()
+            localTime=time.localtime()
+            localTimeString="%04d-%02d-%02d %02d:%02d:%02d" % (localTime.tm_year, localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, localTime.tm_min, localTime.tm_sec)
+            todoList.append({"author": getpass.getuser(), "time": localTimeString, "condition": "open", "text": args[0]})
+            _saveTodoList(todoList)
+            print "Line added:"
+            print _line(todoList, len(todoList) - 1)
+	else:
+            print "What do you want me to add? Use \"todo add <message>\"."
+
+    def edit(*args):
+        if len(args) > 1:
+            todoList = _todoList()
+            try:
+                entryId = int(args[0])
+            except ValueError:
+                print "Which item do you want to edit? Use \"todo edit <id> <message>\"."
+            else:
+                if entryId >= len(todoList):
+                    print "Item with id \"%d\" doesn't exist." % entryId
+    		else:
+                    todoList[entryId]["text"] = args[1]
+                    print "Line edited:"
+                    print _line(todoList, entryId)
+	elif len(args) == 1:
+            print "What do you want to use as the new text? Use \"todo edit <id> <message>\"."
+	elif len(args) == 0:
+            print "Which item do you want to edit? Use \"todo edit <id> <message>\"."
+
+    def done(*args):
+	if len(args) > 0:
+	    todoList = _todoList()
+	    try:
+		entryId = int(args[0])
+	    except ValueError:
+                print "Which item do you want to set done? Use \"todo done <id>\"."
+            else:
+                if entryId >= len(todoList):
+                    print "Item with id \"%d\" doesn't exist." % entryId
+		elif todoList[entryId]["condition"] != "open":
+                    print "Item with id \"%d\" is not open:" % entryId
+                    print _line(todoList, entryId)
+    		else:
+                    todoList[entryId]["condition"] = "done"
+                    _saveTodoList(todoList)
+                    print "Line condition set to \"DONE\":"
+                    print _line(todoList, entryId)
+	else:
+	    print "Which item do you want to set done? Use \"todo done <id>\"."
+
+    def remove(*args):
+	if len(args) > 0:
+	    todoList = _todoList()
+	    try:
+                entryId = int(args[0])
+            except ValueError:
+                print "Which item do you want to remove? Use \"todo remove <id>\"."
+            else:
+                if entryId >= len(todoList):
+                    print "Item with id \"%d\" doesn't exist." % entryId
+		elif todoList[entryId]["condition"] == "remv":
+                    print "Item with id \"%d\" is already removed:" % entryId
+                    print _line(todoList, entryId)
+    		else:
+                    todoList[entryId]["condition"] = "remv"
+                    _saveTodoList(todoList)
+                    print "Line removed:"
+                    print _line(todoList, entryId)
+	else:
+            print "Which item do you want to remove? Use \"todo remove <id>\"."
+
+    def reopen(*args):
+        if len(args) > 0:
+            todoList = _todoList()
+            try:
+                entryId = int(args[0])
+            except ValueError:
+                print "Which item do you want to reopen? Use \"todo reopen <id>\"."
+            else:
+                if entryId >= len(todoList):
+                    print "Item with id \"%d\" doesn't exist." % entryId
+    		elif todoList[entryId]["condition"] == "open":
+                    print "Item with id \"%d\" is already open:" % entryId
+                    print _line(todoList, entryId)
+		else:
+                    todoList[entryId]["condition"] = "open"
+                    _saveTodoList(todoList)
+                    print "Line reopened:"
+                    print _line(todoList, entryId)
+        else:
+            print "Which item do you want to reopen? Use \"todo reopen <id>\"."
+
+    def show(*args):
+        condition = "open"
+        all = False
+        if "-a" in args:
+            all = True
+        elif "-d" in args:
+            condition = "done"
+        elif "-r" in args:
+            condition = "remv"
+        todoList = _todoList()
+        output = ""
+        count = 0
+	for index in xrange(len(todoList)):
+	    if all or todoList[index]["condition"] == condition:
+                output += _line(todoList, index) + "\n"
+                count += 1
+        if all:
+            if output:
+                print "Displayed all items (%d)\n%s" % (count, output[:-1])
+            else:
+                print "Nothing to display!"          
+        else:
+            if output:
+                print "Displayed condition: %s (%d)\n%s" % (condition.upper(), count, output[:-1])
+            else:
+                print "Nothing to display on condition \"%s\"!" % condition.upper()
+
+    if len(sys.argv) < 3:
+        print "Command name not found!"
+    else:
+        try:
+            func = eval(sys.argv[1])
+        except NameError:
+            print "Unknown command name \"%s\"!" % sys.argv[1]
+        else:
+            func(*sys.argv[2:-1])
+del magic
