@@ -235,6 +235,8 @@ if __name__ == "__main__":
         
 
     def export(*args):
+        if len(args) > 0:
+            print "%s\n" % args[0]
         todoList = _todoList()
         output = ""
         count = 0
@@ -245,12 +247,15 @@ if __name__ == "__main__":
                 count += 1
         _saveTodoList(todoList)
         if count:
-            print "Work done in this commit (exported by TODO in Python):\n%s" % output[:-1]
+            print "TODO item done in this commit (exported by TODO in Python):\n%s" % output[:-1]
         else:
-            print "No todo item done in this commit."
+            print "No TODO item done in this commit."
 
     def preview(*args):
         print "Just previewing:"
+        print
+        if len(args) > 0:
+            print "%s\n" % args[0]
         todoList = _todoList()
         output = ""
         count = 0
@@ -259,9 +264,9 @@ if __name__ == "__main__":
                 output += _line(todoList, index) + "\n"
                 count += 1
         if count:
-            print "Work done in this commit (exported by TODO in Python):\n%s" % output[:-1]
+            print "TODO item done in this commit (exported by TODO in Python):\n%s" % output[:-1]
         else:
-            print "No todo item done in this commit."
+            print "No TODO item done in this commit."
 
     def grab(*args):
         todoList = _todoList()
