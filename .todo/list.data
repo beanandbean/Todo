@@ -1,0 +1,120 @@
+(lp0
+(dp1
+S'author'
+p2
+S'TODO grabber'
+p3
+sS'text'
+p4
+S'TODO: Looking back into the file tree for ".todo/list.data"'
+p5
+sS'detail'
+p6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 13.'
+p7
+sS'exported'
+p8
+I00
+sS'time'
+p9
+S'2013-06-26 20:54:38'
+p10
+sS'path'
+p11
+S'/Users/wangsw/Workspace/Python/todo/todo.py'
+p12
+sS'condition'
+p13
+S'open'
+p14
+sa(dp15
+g2
+g3
+sg4
+S'TODO: Looking back into the file tree for ".todo/grab.data"'
+p16
+sg6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 17.'
+p17
+sg8
+I00
+sg9
+S'2013-06-26 20:54:38'
+p18
+sg11
+g12
+sg13
+g14
+sa(dp19
+g2
+g3
+sg4
+S'TODO: Add more extension types'
+p20
+sg6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 281.'
+p21
+sg8
+I00
+sg9
+S'2013-06-26 20:54:38'
+p22
+sg11
+g12
+sg13
+g14
+sa(dp23
+g2
+g3
+sg4
+S'TODO: Use better way to determine language than extension'
+p24
+sg6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 282.'
+p25
+sg8
+I00
+sg9
+S'2013-06-26 20:54:38'
+p26
+sg11
+g12
+sg13
+g14
+sa(dp27
+g2
+g3
+sg4
+S'TODO: For python add triple quote analysis'
+p28
+sg6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 296.'
+p29
+sg8
+I00
+sg9
+S'2013-06-26 20:54:38'
+p30
+sg11
+g12
+sg13
+g14
+sa(dp31
+g2
+g3
+sg4
+S'TODO: Better way to identify previous grabbing results'
+p32
+sg6
+S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 330.'
+p33
+sg8
+I00
+sg9
+S'2013-06-26 20:54:38'
+p34
+sg11
+g12
+sg13
+g14
+sa.
