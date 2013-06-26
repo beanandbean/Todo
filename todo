@@ -337,8 +337,8 @@ if __name__ == "__main__":
 
 
     # Main program
-    print
     if len(sys.argv) < 3:
+        print
         print "Command name not found!"
         print "Commands available:"
         allObjects = copy.copy(locals())
@@ -355,13 +355,17 @@ if __name__ == "__main__":
                     print
         if count % 5 != 0:
             print
+        print
     else:
         try:
             func = eval(sys.argv[1])
         except NameError:
             print "Unknown command name \"%s\"!" % sys.argv[1]
         else:
+            if sys.argv[1] != "export":
+                print
             func(*sys.argv[2:-1])
-    print
+            if sys.argv[1] != "export":
+                print
 
 del magic
