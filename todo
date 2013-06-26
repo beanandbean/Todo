@@ -10,9 +10,11 @@ if __name__ == "__main__":
         return localTimeString
 
     def _todoListPath():
+        # TODO: Looking back into the file tree for ".todo/list.data"
         return os.path.join(os.getcwd(), ".todo", "list.data")
 
     def _grabListPath():
+        # TODO: Looking back into the file tree for ".todo/grab.data"
         return os.path.join(os.getcwd(), ".todo", "grab.data")
 
     def _todoList():
@@ -276,6 +278,8 @@ if __name__ == "__main__":
                 todoList[index]["condition"] = "done"
         for path in _walkthrough(os.getcwd()):
             extension = os.path.splitext(path)[1][1:]
+            # TODO: Add more extension types
+            # TODO: Use better way to determine language than extension
             if extension in ("c", "cpp", "h", "m"):
                 # C, C++, Obj-c
                 sign = {"//": "\n", "/*": "*/"}
@@ -289,7 +293,7 @@ if __name__ == "__main__":
                 continue
             print "Scanning %s" % path
             allsign = copy.copy(sign)
-            allsign.update({'"': '"', "'": "'"})
+            allsign.update({'"': '"', "'": "'"}) # TODO: For python add triple quote analysis
             strings = list()
             linenum = 1
             f = open(path)
@@ -323,10 +327,10 @@ if __name__ == "__main__":
                 print "Found: (line %03d) %s" % item
                 found = False
                 for index in grabList:
+                    # TODO: Better way to identify previous grabbing results
                     if todoList[index]["path"] == path and todoList[index]["text"] == item[1] and todoList[index]["condition"] == "done":
                         todoList[index]["detail"] = "TODO grabbed from %s, line %d." % (path, item[0])
                         todoList[index]["condition"] = "open"
-                        todoList[index]["time"] = _now()
                         found = True
                         break
                 if not found:
