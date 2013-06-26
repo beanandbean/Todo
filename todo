@@ -4,8 +4,16 @@ magic='--calling-python-from-bash--'
 if __name__ == "__main__":
     import copy, getpass, os, pickle, sys, time
 
+    def _now():
+        localTime=time.localtime()
+        localTimeString="%04d-%02d-%02d %02d:%02d:%02d" % (localTime.tm_year, localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, localTime.tm_min, localTime.tm_sec)
+        return localTimeString
+
     def _todoListPath():
         return os.path.join(os.getcwd(), ".todo", "list.data")
+
+    def _grabListPath():
+        return os.path.join(os.getcwd(), ".todo", "grab.data")
 
     def _todoList():
 	if os.path.isfile(_todoListPath()):
@@ -13,17 +21,27 @@ if __name__ == "__main__":
         else:
 	    return list()
 
+    def _grabList():
+	if os.path.isfile(_grabListPath()):
+	    return pickle.load(open(_grabListPath()))
+        else:
+	    return list()
+
     def _saveTodoList(todoList):
         pickle.dump(todoList, open(_todoListPath(), "w"))
         os.chmod(_todoListPath(), 0666)
 
-    def _addLine(todoList, text, detail = "", author = getpass.getuser()):
-        localTime=time.localtime()
-        localTimeString="%04d-%02d-%02d %02d:%02d:%02d" % (localTime.tm_year, localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, localTime.tm_min, localTime.tm_sec)
-        todoList.append({"author": getpass.getuser(), "time": localTimeString, "condition": "open", "text": text, "detail":detail, "exported": False})
+    def _saveGrabList(grabList):
+        pickle.dump(grabList, open(_grabListPath(), "w"))
+        os.chmod(_grabListPath(), 0666)
+
+    def _addLine(todoList, text, detail = "", author = getpass.getuser(), more = {}):
+        data = {"author": author, "time": _now(), "condition": "open", "text": text, "detail":detail, "exported": False}
+        data.update(more)
+        todoList.append(data)
 
     def _line(todoList, index):
-	return "%13s %03d: [%s] %s" % (todoList[index]["author"], index, todoList[index]["condition"].upper(), todoList[index]["text"])
+	return " %15s %03d: [%s] %s" % ("(%s)" % todoList[index]["author"], index, todoList[index]["condition"].upper(), todoList[index]["text"])
 
     def _walkthrough(path):
         if os.path.isdir(path):
@@ -46,7 +64,6 @@ if __name__ == "__main__":
             os.system("rm -r -f %s" % todoDir)
 	os.mkdir(todoDir)
 	os.chmod(todoDir, 0777)
-	_saveTodoList(list())
 	print "Initialized!"
 
     def add(*args):
@@ -56,7 +73,7 @@ if __name__ == "__main__":
             else:
                 detail = ""
             todoList = _todoList()
-            _addline(todoList, args[0], text, detail)
+            _addLine(todoList, args[0], detail)
             _saveTodoList(todoList)
             print "Line added:"
             print _line(todoList, len(todoList) - 1)
@@ -71,7 +88,7 @@ if __name__ == "__main__":
             except ValueError:
                 print "Which item do you want to edit? Use \"todo edit <id> <message> [<detail>]\"."
             else:
-                if entryId >= len(todoList):
+                if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
     		else:
                     todoList[entryId]["text"] = args[1]
@@ -92,7 +109,7 @@ if __name__ == "__main__":
 	    except ValueError:
                 print "Which item do you want to set done? Use \"todo done <id>\"."
             else:
-                if entryId >= len(todoList):
+                if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
 		elif todoList[entryId]["condition"] != "open":
                     print "Item with id \"%d\" is not open:" % entryId
@@ -106,6 +123,12 @@ if __name__ == "__main__":
 	    print "Which item do you want to set done? Use \"todo done <id>\"."
 
     def remove(*args):
+        if "-r" in args:
+            args = list(args)
+            args.remove("-r")
+            real = True
+        else:
+            real = False
 	if len(args) > 0:
 	    todoList = _todoList()
 	    try:
@@ -113,17 +136,33 @@ if __name__ == "__main__":
             except ValueError:
                 print "Which item do you want to remove? Use \"todo remove <id>\"."
             else:
-                if entryId >= len(todoList):
+                if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
-		elif todoList[entryId]["condition"] == "remv":
-                    print "Item with id \"%d\" is already removed:" % entryId
-                    print _line(todoList, entryId)
-    		else:
-                    todoList[entryId]["condition"] = "remv"
-                    todoList[entryId]["exported"] = False
-                    _saveTodoList(todoList)
-                    print "Line removed:"
-                    print _line(todoList, entryId)
+                else:
+                    if real:
+                        print "This is REAL removing! (You cannot undo it)"
+                        answer = raw_input("Are you sure to remove it? (y/n): ")
+                        if answer.lower() != "y":
+                            print "Not removing!"
+                            return
+                        print "Line removed (real removing):"
+                        print _line(todoList, entryId)
+                        todoList[entryId] = None
+                        _saveTodoList(todoList)
+                        grabList = _grabList()
+                        if entryId in grabList:
+                            grabList.remove(entryId)
+                            _saveGrabList(grabList)
+                    else:
+                        if todoList[entryId]["condition"] == "remv":
+                            print "Item with id \"%d\" is already removed:" % entryId
+                            print _line(todoList, entryId)
+                        else:
+                            todoList[entryId]["condition"] = "remv"
+                            todoList[entryId]["exported"] = False
+                            _saveTodoList(todoList)
+                            print "Line removed:"
+                            print _line(todoList, entryId)
 	else:
             print "Which item do you want to remove? Use \"todo remove <id>\"."
 
@@ -135,7 +174,7 @@ if __name__ == "__main__":
             except ValueError:
                 print "Which item do you want to reopen? Use \"todo reopen <id>\"."
             else:
-                if entryId >= len(todoList):
+                if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
     		elif todoList[entryId]["condition"] == "open":
                     print "Item with id \"%d\" is already open:" % entryId
@@ -151,9 +190,9 @@ if __name__ == "__main__":
 
     def show(*args):
         condition = "open"
-        all = False
+        allcondition = False
         if "-a" in args:
-            all = True
+            allcondition = True
         elif "-d" in args:
             condition = "done"
         elif "-r" in args:
@@ -162,10 +201,10 @@ if __name__ == "__main__":
         output = ""
         count = 0
 	for index in xrange(len(todoList)):
-	    if all or todoList[index]["condition"] == condition:
+	    if todoList[index] and (allcondition or todoList[index]["condition"] == condition):
                 output += _line(todoList, index) + "\n"
                 count += 1
-        if all:
+        if allcondition:
             if output:
                 print "Displayed all items (%d)\n%s" % (count, output[:-1])
             else:
@@ -184,10 +223,11 @@ if __name__ == "__main__":
             except ValueError:
                 print "Which item do you want to see? Use \"todo detail <id>\"."
             else:
-                if entryId >= len(todoList):
+                if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
 		else:
                     print _line(todoList, entryId)
+                    print "Time: %s" % todoList[entryId]["time"]
                     print "Detail:"
                     print todoList[entryId]["detail"]
         else:
@@ -215,7 +255,7 @@ if __name__ == "__main__":
         output = ""
         count = 0
         for index in xrange(len(todoList)):
-            if todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
+            if todoList[index] and todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
                 output += _line(todoList, index) + "\n"
                 count += 1
         if count:
@@ -225,6 +265,10 @@ if __name__ == "__main__":
 
     def grab(*args):
         todoList = _todoList()
+        grabList = _grabList()
+        for index in grabList:
+            if todoList[index]["condition"] == "open":
+                todoList[index]["condition"] = "done"
         for path in _walkthrough(os.getcwd()):
             extension = os.path.splitext(path)[1][1:]
             if extension in ("c", "cpp", "h", "m"):
@@ -272,7 +316,18 @@ if __name__ == "__main__":
                 text = text[pos + len(allsign[start]):]
             for item in strings:
                 print "Found: (line %03d) %s" % item
-                _addLine(todoList, "%s" % item[1], "TODO grabbed from %s, line %d." % (path, item[0]), "TODO grabber")
+                found = False
+                for index in grabList:
+                    if todoList[index]["path"] == path and todoList[index]["text"] == item[1] and todoList[index]["condition"] == "done":
+                        todoList[index]["detail"] = "TODO grabbed from %s, line %d." % (path, item[0])
+                        todoList[index]["condition"] = "open"
+                        todoList[index]["time"] = _now()
+                        found = True
+                        break
+                if not found:
+                    _addLine(todoList, "%s" % item[1], "TODO grabbed from %s, line %d." % (path, item[0]), "TODO grabber", {"path": path})
+                    grabList.append(len(todoList) - 1)
+        _saveGrabList(grabList)
         _saveTodoList(todoList)
 
 
@@ -305,4 +360,3 @@ if __name__ == "__main__":
     print
 
 del magic
-# TODO: This is just a test!
