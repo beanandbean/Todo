@@ -96,6 +96,7 @@ if __name__ == "__main__":
                     todoList[entryId]["text"] = args[1]
                     if len(args) > 2:
                         todoList[entryId]["detail"] = args[2]
+                    _saveTodoList(todoList)
                     print "Line edited:"
                     print _line(todoList, entryId)
 	elif len(args) == 1:
