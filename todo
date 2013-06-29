@@ -320,7 +320,7 @@ if __name__ == "__main__":
                     for index in xrange(len(subs)):
                         line = subs[index]
                         if line.upper().startswith("TODO:"):
-                            strings.append((linenum + index, line))
+                            strings.append((linenum + index, line[5:].strip()))
                 linenum = _linecount(text[:pos + len(allsign[start])], linenum)
                 text = text[pos + len(allsign[start]):]
             for item in strings:
@@ -353,6 +353,7 @@ if __name__ == "__main__":
         count = 0
         for objectName in allKeys:
             if objectName[0] != "_" and type(allObjects[objectName]) == type(function):
+                # TODO: Print the command names in girds
                 print objectName,
                 count += 1
                 if count % 5 == 0:
