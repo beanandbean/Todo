@@ -355,7 +355,7 @@ if __name__ == "__main__":
         count = 0
         for objectName in allKeys:
             if objectName[0] != "_" and type(allObjects[objectName]) == type(function):
-                # TODO: Print the command names in girds
+                # TODO: Print the command names in grids
                 print objectName,
                 count += 1
                 if count % 5 == 0:

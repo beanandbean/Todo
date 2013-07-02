@@ -117,22 +117,31 @@ sg11
 g12
 sg13
 g14
-sa(dp35
-g2
-g3
-sg4
-S'Print the command names in girds'
+saNa(dp35
+S'author'
 p36
-sg6
-S'TODO grabbed from todo.py, line 358.'
+S'TODO grabber'
 p37
-sg8
-I00
-sg9
-S'2013-07-02 13:34:59'
+sS'text'
 p38
-sg11
-g12
-sg13
+S'Print the command names in grids'
+p39
+sS'detail'
+p40
+S'TODO grabbed from todo.py, line 358.'
+p41
+sS'exported'
+p42
+I00
+sS'time'
+p43
+S'2013-07-02 20:58:35'
+p44
+sS'path'
+p45
+S'todo.py'
+p46
+sS'condition'
+p47
 g14
 sa.
