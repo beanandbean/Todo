@@ -244,7 +244,7 @@ if __name__ == "__main__":
         output = ""
         count = 0
         for index in xrange(len(todoList)):
-            if todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
+            if todoList[index] and todoList[index]["condition"] == "done" and not todoList[index]["exported"]:
                 todoList[index]["exported"] = True
                 output += _line(todoList, index) + "\n"
                 count += 1
@@ -278,6 +278,7 @@ if __name__ == "__main__":
             if todoList[index]["condition"] == "open":
                 todoList[index]["condition"] = "done"
         for path in _walkthrough(os.getcwd()):
+            relpath = os.path.relpath(path)
             extension = os.path.splitext(path)[1][1:]
             # TODO: Add more extension types
             # TODO: Use better way to determine language than extension
@@ -292,7 +293,7 @@ if __name__ == "__main__":
                 sign = {"#": "\n"}
             else:
                 continue
-            print "Scanning %s" % path
+            print "Scanning %s" % relpath
             allsign = copy.copy(sign)
             allsign.update({'"': '"', "'": "'"}) # TODO: For python add triple quote analysis
             strings = list()
@@ -329,13 +330,13 @@ if __name__ == "__main__":
                 found = False
                 for index in grabList:
                     # TODO: Better way to identify previous grabbing results
-                    if todoList[index]["path"] == path and todoList[index]["text"] == item[1] and todoList[index]["condition"] == "done":
-                        todoList[index]["detail"] = "TODO grabbed from %s, line %d." % (path, item[0])
+                    if todoList[index]["path"] == relpath and todoList[index]["text"] == item[1] and todoList[index]["condition"] == "done":
+                        todoList[index]["detail"] = "TODO grabbed from %s, line %d." % (relpath, item[0])
                         todoList[index]["condition"] = "open"
                         found = True
                         break
                 if not found:
-                    _addLine(todoList, "%s" % item[1], "TODO grabbed from %s, line %d." % (path, item[0]), "TODO grabber", {"path": path})
+                    _addLine(todoList, "%s" % item[1], "TODO grabbed from %s, line %d." % (relpath, item[0]), "TODO grabber", {"path": relpath})
                     grabList.append(len(todoList) - 1)
         _saveGrabList(grabList)
         _saveTodoList(todoList)

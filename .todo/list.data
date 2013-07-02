@@ -1,27 +1,27 @@
 (lp0
-(dp1
+NaNaNaNaNaNaNa(dp1
 S'author'
 p2
 S'TODO grabber'
 p3
 sS'text'
 p4
-S'TODO: Looking back into the file tree for ".todo/list.data"'
+S'Looking back into the file tree for ".todo/list.data"'
 p5
 sS'detail'
 p6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 13.'
+S'TODO grabbed from todo.py, line 13.'
 p7
 sS'exported'
 p8
 I00
 sS'time'
 p9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p10
 sS'path'
 p11
-S'/Users/wangsw/Workspace/Python/todo/todo.py'
+S'todo.py'
 p12
 sS'condition'
 p13
@@ -31,15 +31,15 @@ sa(dp15
 g2
 g3
 sg4
-S'TODO: Looking back into the file tree for ".todo/grab.data"'
+S'Looking back into the file tree for ".todo/grab.data"'
 p16
 sg6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 17.'
+S'TODO grabbed from todo.py, line 17.'
 p17
 sg8
 I00
 sg9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p18
 sg11
 g12
@@ -49,15 +49,15 @@ sa(dp19
 g2
 g3
 sg4
-S'TODO: Add more extension types'
+S'Add more extension types'
 p20
 sg6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 281.'
+S'TODO grabbed from todo.py, line 283.'
 p21
 sg8
 I00
 sg9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p22
 sg11
 g12
@@ -67,15 +67,15 @@ sa(dp23
 g2
 g3
 sg4
-S'TODO: Use better way to determine language than extension'
+S'Use better way to determine language than extension'
 p24
 sg6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 282.'
+S'TODO grabbed from todo.py, line 284.'
 p25
 sg8
 I00
 sg9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p26
 sg11
 g12
@@ -85,15 +85,15 @@ sa(dp27
 g2
 g3
 sg4
-S'TODO: For python add triple quote analysis'
+S'For python add triple quote analysis'
 p28
 sg6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 296.'
+S'TODO grabbed from todo.py, line 298.'
 p29
 sg8
 I00
 sg9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p30
 sg11
 g12
@@ -103,45 +103,36 @@ sa(dp31
 g2
 g3
 sg4
-S'TODO: Better way to identify previous grabbing results'
+S'Better way to identify previous grabbing results'
 p32
 sg6
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 330.'
+S'TODO grabbed from todo.py, line 332.'
 p33
 sg8
 I00
 sg9
-S'2013-06-26 20:54:38'
+S'2013-07-02 13:34:59'
 p34
 sg11
 g12
 sg13
 g14
 sa(dp35
-S'author'
+g2
+g3
+sg4
+S'Print the command names in girds'
 p36
-S'TODO grabber'
+sg6
+S'TODO grabbed from todo.py, line 358.'
 p37
-sS'text'
-p38
-S'TODO: Print the command names in girds'
-p39
-sS'detail'
-p40
-S'TODO grabbed from /Users/wangsw/Workspace/Python/todo/todo.py, line 356.'
-p41
-sS'exported'
-p42
+sg8
 I00
-sS'time'
-p43
-S'2013-06-26 21:40:45'
-p44
-sS'path'
-p45
-S'/Users/wangsw/Workspace/Python/todo/todo.py'
-p46
-sS'condition'
-p47
+sg9
+S'2013-07-02 13:34:59'
+p38
+sg11
+g12
+sg13
 g14
 sa.
