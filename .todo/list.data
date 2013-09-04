@@ -52,7 +52,7 @@ sg4
 S'Add more extension types'
 p20
 sg6
-S'TODO grabbed from todo.py, line 283.'
+S'TODO grabbed from todo.py, line 311.'
 p21
 sg8
 I00
@@ -70,7 +70,7 @@ sg4
 S'Use better way to determine language than extension'
 p24
 sg6
-S'TODO grabbed from todo.py, line 284.'
+S'TODO grabbed from todo.py, line 312.'
 p25
 sg8
 I00
@@ -88,7 +88,7 @@ sg4
 S'For python add triple quote analysis'
 p28
 sg6
-S'TODO grabbed from todo.py, line 298.'
+S'TODO grabbed from todo.py, line 326.'
 p29
 sg8
 I00
@@ -106,7 +106,7 @@ sg4
 S'Better way to identify previous grabbing results'
 p32
 sg6
-S'TODO grabbed from todo.py, line 332.'
+S'TODO grabbed from todo.py, line 360.'
 p33
 sg8
 I00
@@ -128,7 +128,7 @@ S'Print the command names in grids'
 p39
 sS'detail'
 p40
-S'TODO grabbed from todo.py, line 358.'
+S'TODO grabbed from todo.py, line 386.'
 p41
 sS'exported'
 p42

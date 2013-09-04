@@ -61,6 +61,8 @@ if __name__ == "__main__":
         return linenum
 
     def init(*args):
+        """Command \033[1mINIT\033[m - synopsis: "\033[1mtodo init\033[m"
+    Use this command to initialize an empty todo list in a directory."""
         todoDir = os.path.join(os.getcwd(), ".todo")
         if os.path.isdir(todoDir):
             os.system("rm -r -f %s" % todoDir)
@@ -69,6 +71,12 @@ if __name__ == "__main__":
         print "Initialized!"
 
     def add(*args):
+        """Command \033[1mADD\033[m - synopsis: "\033[1mtodo add <message> [<detail>]\033[m"
+    Use this command to add a new todo item in current todo list.
+
+PARAMETERS:
+    \033[4m<message>\033[m: The message you want to show for your todo item.
+     \033[4m<detail>\033[m: (optional) The detail of this todo item, which can be read using \033[1mtodo detail\033[m."""
         if len(args) > 0:
             if len(args) > 1:
                 detail = args[1]
@@ -80,15 +88,22 @@ if __name__ == "__main__":
             print "Line added:"
             print _line(todoList, len(todoList) - 1)
         else:
-            print "What do you want me to add? Use \"todo add <message> [<detail>]\"."
+            print "What do you want me to add? Use \"\033[1mtodo add <message> [<detail>]\033[m\"."
 
     def edit(*args):
+        """Command \033[1mEDIT\033[m - synopsis: "\033[1mtodo edit <id> <message> [<detail>]\033[m"
+    Use this command to edit the message and the detail of an todo item.
+
+PARAMETERS:
+         \033[4m<id>\033[m: A int number that specifies the todo item you want to edit, which can be get using \033[1mtodo show\033[m.
+    \033[4m<message>\033[m: The new message you want to show for your todo item.
+     \033[4m<detail>\033[m: (optional) The new detail of this todo item. If this is not set, then the todo item will keep the old detail."""
         if len(args) > 1:
             todoList = _todoList()
             try:
                 entryId = int(args[0])
             except ValueError:
-                print "Which item do you want to edit? Use \"todo edit <id> <message> [<detail>]\"."
+                print "Which item do you want to edit? Use \"\033[1mtodo edit <id> <message> [<detail>]\033[m\"."
             else:
                 if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
@@ -100,17 +115,22 @@ if __name__ == "__main__":
                     print "Line edited:"
                     print _line(todoList, entryId)
         elif len(args) == 1:
-            print "What do you want to use as the new text? Use \"todo edit <id> <message> [<detail>]\"."
+            print "What do you want to use as the new text? Use \"\033[1mtodo edit <id> <message> [<detail>]\033[m\"."
         elif len(args) == 0:
-            print "Which item do you want to edit? Use \"todo edit <id> <message> [<detail>]\"."
+            print "Which item do you want to edit? Use \"\033[1mtodo edit <id> <message> [<detail>]\033[m\"."
 
     def done(*args):
+        """Command \033[1mDONE\033[m - synopsis: "\033[1mtodo done <id>\033[m"
+    Use this command to set a todo item as done.
+
+PARAMETERS:
+    \033[4m<id>\033[m: A int number that specifies the todo item you want to set done, which can be get using \033[1mtodo show\033[m."""
         if len(args) > 0:
             todoList = _todoList()
             try:
                 entryId = int(args[0])
             except ValueError:
-                print "Which item do you want to set done? Use \"todo done <id>\"."
+                print "Which item do you want to set done? Use \"\033[1mtodo done <id>\033[m\"."
             else:
                 if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
@@ -123,9 +143,17 @@ if __name__ == "__main__":
                     print "Line condition set to \"DONE\":"
                     print _line(todoList, entryId)
         else:
-            print "Which item do you want to set done? Use \"todo done <id>\"."
+            print "Which item do you want to set done? Use \"\033[1mtodo done <id>\033[m\"."
 
     def remove(*args):
+        """Command \033[1mREMOVE\033[m - synopsis: "\033[1mtodo remove [-r] <id>\033[m"
+    Use this command to remove a todo item.
+
+PARAMETERS:
+    \033[4m<id>\033[m: A int number that specifies the todo item you want to set done, which can be get using \033[1mtodo show\033[m.
+
+OPTIONS:
+      \033[4m-r\033[m: Remove a todo item completely instead of just marking it as deleted."""
         if "-r" in args:
             args = list(args)
             args.remove("-r")
@@ -137,13 +165,13 @@ if __name__ == "__main__":
             try:
                 entryId = int(args[0])
             except ValueError:
-                print "Which item do you want to remove? Use \"todo remove <id>\"."
+                print "Which item do you want to remove? Use \"\033[1mtodo remove [-r] <id>\033[m\"."
             else:
                 if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
                 else:
                     if real:
-                        print "This is REAL removing! (You cannot undo it)"
+                        print "This is \033[1mREAL\033[m removing! (You cannot undo it)"
                         answer = raw_input("Are you sure to remove it? (y/n): ")
                         if answer.lower() != "y":
                             print "Not removing!"
@@ -167,7 +195,7 @@ if __name__ == "__main__":
                             print "Line removed:"
                             print _line(todoList, entryId)
         else:
-            print "Which item do you want to remove? Use \"todo remove <id>\"."
+            print "Which item do you want to remove? Use \"\033[1mtodo remove [-r] <id>\033[m\"."
 
     def reopen(*args):
         if len(args) > 0:
@@ -369,10 +397,18 @@ if __name__ == "__main__":
         except NameError:
             print "Unknown command name \"%s\"!" % sys.argv[1]
         else:
-            if sys.argv[1] != "export":
+            if len(sys.argv) > 3 and sys.argv[2] in ("--help", "-h"):
                 print
-            func(*sys.argv[2:-1])
-            if sys.argv[1] != "export":
+                if func.func_doc:
+                    print func.func_doc
+                else:
+                    print "Command \"%s\" does not have help!" % sys.argv[1]
                 print
+            else:
+                if sys.argv[1] != "export":
+                    print
+                func(*sys.argv[2:-1])
+                if sys.argv[1] != "export":
+                    print
 
 del magic
