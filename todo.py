@@ -60,6 +60,28 @@ if __name__ == "__main__":
                 linenum += 1
         return linenum
 
+    def _availableCommands():
+        print "Commands available:\033[1m"
+        print "   ",
+        allObjects = copy.copy(globals())
+        allKeys = allObjects.keys()
+        allKeys.sort()
+        def function():
+            pass
+        count = 0
+        for objectName in allKeys:
+            if objectName[0] != "_" and type(allObjects[objectName]) == type(function):
+                # TODO: Print the command names in grids
+                print objectName + " " * (8 - len(objectName)),
+                count += 1
+                if count % 5 == 0:
+                    print
+                    print "   ",
+        if count % 5 != 0:
+            print
+        print "\033[m"
+
+
     def init(*args):
         """Command \033[1mINIT\033[m - synopsis: "\033[1mtodo init\033[m"
     Use this command to initialize an empty todo list in a directory."""
@@ -150,7 +172,7 @@ PARAMETERS:
     Use this command to remove a todo item.
 
 PARAMETERS:
-    \033[4m<id>\033[m: A int number that specifies the todo item you want to set done, which can be get using \033[1mtodo show\033[m.
+    \033[4m<id>\033[m: A int number that specifies the todo item you want to remove, which can be get using \033[1mtodo show\033[m.
 
 OPTIONS:
       \033[4m-r\033[m: Remove a todo item completely instead of just marking it as deleted."""
@@ -198,12 +220,17 @@ OPTIONS:
             print "Which item do you want to remove? Use \"\033[1mtodo remove [-r] <id>\033[m\"."
 
     def reopen(*args):
+        """Command \033[1mREOPEN\033[m - synopsis: "\033[1mtodo reopen <id>\033[m"
+    Use this command to reopen a todo item.
+
+PARAMETERS:
+    \033[4m<id>\033[m: A int number that specifies the todo item you want to reopen, which can be get using \033[1mtodo show\033[m."""
         if len(args) > 0:
             todoList = _todoList()
             try:
                 entryId = int(args[0])
             except ValueError:
-                print "Which item do you want to reopen? Use \"todo reopen <id>\"."
+                print "Which item do you want to reopen? Use \"\033[1mtodo reopen <id>\033[m\"."
             else:
                 if entryId >= len(todoList) or not todoList[entryId]:
                     print "Item with id \"%d\" doesn't exist." % entryId
@@ -217,9 +244,16 @@ OPTIONS:
                     print "Line reopened:"
                     print _line(todoList, entryId)
         else:
-            print "Which item do you want to reopen? Use \"todo reopen <id>\"."
+            print "Which item do you want to reopen? Use \"\033[1mtodo reopen <id>\033[m\"."
 
     def show(*args):
+        """Command \033[1mSHOW\033[m - synopsis: "\033[1mtodo show [-a|-d|-r]\033[m"
+    Use this command to show the todo items. Default range is opened items, use options to change ranges.
+
+OPTIONS:
+    \033[4m-a\033[m: Show todo items of all conditions.
+    \033[4m-d\033[m: Show todo items that are done.
+    \033[4m-r\033[m: Show todo items that are marked as removed."""
         condition = "open"
         allcondition = False
         if "-a" in args:
@@ -247,6 +281,11 @@ OPTIONS:
                 print "Nothing to display on condition \"%s\"!" % condition.upper()
 
     def detail(*args):
+        """Command \033[1mDETAIL\033[m - synopsis: "\033[1mtodo detail <id>\033[m"
+    Use this command to show the detail of a todo item.
+    
+PARAMETERS:
+    \033[4m<id>\033[m: A int number that specifies the todo item of which you want to see the detail, which can be get using \033[1mtodo show\033[m."""
         if len(args) > 0:
             todoList = _todoList()
             try:
@@ -266,6 +305,11 @@ OPTIONS:
         
 
     def export(*args):
+        """Command \033[1mEXPORT\033[m - synopsis: "\033[1mtodo export [<message>]\033[m"
+    Use this command to make a list of recently done items, so that you can use it as a commit description of version control systems. Every item will only be exported once and will not appear when you export next time.
+
+PARAMETERS:
+    \033[4m<message>\033[m: (optional) The message that you want to put before the list. If not a message is passed, then there will be no line before the list."""
         if len(args) > 0:
             print "%s\n" % args[0]
         todoList = _todoList()
@@ -283,6 +327,11 @@ OPTIONS:
             print "No TODO item done in this commit."
 
     def preview(*args):
+        """Command \033[1mEXPORT\033[m - synopsis: "\033[1mtodo export [<message>]\033[m"
+    Use this command to preview the list of recently done items, so that you can use it as a commit description of version control systems. You can look through the items you have done using this command without worrying them being marked as exported.
+
+PARAMETERS:
+    \033[4m<message>\033[m: (optional) The message that you want to put before the list. If not a message is passed, then there will be no line before the list."""
         print "Just previewing:"
         print
         if len(args) > 0:
@@ -300,6 +349,8 @@ OPTIONS:
             print "No TODO item done in this commit."
 
     def grab(*args):
+        """Command \033[1mGRAB\033[m - synopsis: "\033[1mtodo grab\033[m"
+    Use this command to grab all todo items in your code, which should be in comments and start with "\033[1mTODO:\033[m". It will not grab the same todo for several times even if you run it for multiple times."""
         todoList = _todoList()
         grabList = _grabList()
         for index in grabList:
@@ -354,7 +405,7 @@ OPTIONS:
                 linenum = _linecount(text[:pos + len(allsign[start])], linenum)
                 text = text[pos + len(allsign[start]):]
             for item in strings:
-                print "Found: (line %03d) %s" % item
+                print "    Found: (line %03d) %s" % item
                 found = False
                 for index in grabList:
                     # TODO: Better way to identify previous grabbing results
@@ -374,41 +425,32 @@ OPTIONS:
     if len(sys.argv) < 3:
         print
         print "Command name not found!"
-        print "Commands available:"
-        allObjects = copy.copy(locals())
-        allKeys = allObjects.keys()
-        allKeys.sort()
-        def function():
-            pass
-        count = 0
-        for objectName in allKeys:
-            if objectName[0] != "_" and type(allObjects[objectName]) == type(function):
-                # TODO: Print the command names in grids
-                print objectName,
-                count += 1
-                if count % 5 == 0:
-                    print
-        if count % 5 != 0:
-            print
         print
+        _availableCommands()
     else:
-        try:
-            func = eval(sys.argv[1])
-        except NameError:
-            print "Unknown command name \"%s\"!" % sys.argv[1]
+        if sys.argv[1] in ("--help", "-h"):
+            print
+            print "Todo is a todo list written in Python. It allows you to grab all your todo items in your src files and read them together."
+            print
+            _availableCommands()
         else:
-            if len(sys.argv) > 3 and sys.argv[2] in ("--help", "-h"):
-                print
-                if func.func_doc:
-                    print func.func_doc
-                else:
-                    print "Command \"%s\" does not have help!" % sys.argv[1]
-                print
+            try:
+                func = eval(sys.argv[1])
+            except NameError:
+                print "Unknown command name \"%s\"!" % sys.argv[1]
             else:
-                if sys.argv[1] != "export":
+                if len(sys.argv) > 3 and sys.argv[2] in ("--help", "-h"):
                     print
-                func(*sys.argv[2:-1])
-                if sys.argv[1] != "export":
+                    if func.func_doc:
+                        print func.func_doc
+                    else:
+                        print "Command \"%s\" does not have help!" % sys.argv[1]
                     print
+                else:
+                    if sys.argv[1] != "export":
+                        print
+                    func(*sys.argv[2:-1])
+                    if sys.argv[1] != "export":
+                        print
 
 del magic
